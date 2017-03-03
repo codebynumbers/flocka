@@ -1,4 +1,4 @@
-from fifty_flask.views.generic import FormView, url_rule
+from fifty_flask.views.generic import FormView, url_rule, RedirectView
 from flask import Blueprint, url_for, flash
 from flask import request
 from flask_login import current_user
@@ -31,15 +31,13 @@ class BranchEditView(BranchAccessMixin, FormView):
     def get_form_obj(self):
         return self.branch
 
-    def get_redirect_url(self):
-        return url_for('.edit', branch_id=self.branch.id)
-
     def form_valid(self, form, **context):
-        branch = self._get_branch()
+        branch = Branch.query.filter_by(name=form.name.data).first() or self._get_branch()
         form.populate_obj(branch)
         branch.user = current_user
         branch.save()
-        branch.run_container()
+        if not Branch.is_container_running(branch.container_id):
+            branch.run_container()
         self.branch = branch
         flash("Branch saved", "success")
         return super(BranchEditView, self).form_valid(form, **context)
@@ -68,11 +66,40 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             NumericColumn(name='id', label='ID', int_format='{:}'),
             LinkColumn(name='name', label="Name",
                        endpoint='.edit', url_params={'branch_id': 'id'}),
-            SelfLinkColumn('name', label='Url',
+            SelfLinkColumn('url', label='Url',
                        url="http://{subdomain}." + request.host,
                        url_params={'subdomain': 'name'}),
-            RunningColumn(name='status')
+            RunningColumn(name='status'),
+            LinkColumn(name='start', endpoint='.start', url_params={'branch_id': 'id'}, link_text='Start'),
+            LinkColumn(name='stop', endpoint='.stop', url_params={'branch_id': 'id'}, link_text='Stop')
+
         ]
 
     def get_query(self, params, **context):
         return Branch.query.filter_by(user=current_user)
+
+
+@url_rule(branched_bp, ['/<branch_id>/start/'], 'start')
+class BranchStartView(BranchAccessMixin, RedirectView):
+
+    redirect_endpoint = 'branches.list'
+
+    def get_context_data(self, **context):
+        return {}
+
+    def get(self, *args, **kwargs):
+        Branch.start_container(self.branch)
+        return super(BranchStartView, self).get(*args, **kwargs)
+
+
+@url_rule(branched_bp, ['/<branch_id>/stop/'], 'stop')
+class BranchStopView(BranchAccessMixin, RedirectView):
+
+    redirect_endpoint = '.list'
+
+    def get_context_data(self, **context):
+        return {}
+
+    def get(self, *args, **kwargs):
+        Branch.stop_container(self.branch)
+        return super(BranchStopView, self).get(*args, **kwargs)
