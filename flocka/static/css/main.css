@@ -1,0 +1,26 @@
+.container
+{
+    margin-top: 60px;
+}
+
+.text-center
+{
+    text-align: center;
+}
+
+/* Non-default style for navbar */
+.navbar-inverse
+{
+    background-color: #49016D;
+}
+
+.navbar-inverse .navbar-brand
+{
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-inverse .navbar-nav>li>a
+{
+    color: white;
+}
