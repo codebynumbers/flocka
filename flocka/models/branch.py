@@ -70,6 +70,11 @@ class Branch(ActiveModel, db.Model):
             self.container_id = container_id[:12]
             self.status = self.check_status(self.container_id)
 
+    def rm_container(self):
+        cmd = ['docker', 'rm', self.container_id]
+        subprocess.check_output(cmd)
+
+
     @staticmethod
     def reload_nginx():
         subprocess.call(current_app.config['NGINX_RELOAD_CMD'].split(' '))

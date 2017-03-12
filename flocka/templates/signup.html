@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Flask Signup Example{% endblock %}
+{% block title %}Signup for Flocka{% endblock %}
 
 {% block body %}
-    <h2>Flask Signup Example</h2>
-    <p>Create a new account, password will be bcrypted</p>
+    <h2>Signup for Flocka</h2>
+    <p>Create a new account</p>
     
     <div class="row">
         <div class="col-md-4"></div>
@@ -15,14 +15,35 @@
                 <div class="form-group">
                     {{ form.username.label }}
                     {{ form.username(class_="form-control") }}
+                    {% if form.username.errors %}
+                        <ul class="error text-danger">
+                            {% for error in form.username.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.password.label }}
                     {{ form.password(class_="form-control") }}
+                    {% if form.password.errors %}
+                    <ul class="error text-danger">
+                        {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.password_confirm.label }}
                     {{ form.password_confirm(class_="form-control") }}
+                    {% if form.password_confirm.errors %}
+                    <ul class="error text-danger">
+                        {% for error in form.password_confirm.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

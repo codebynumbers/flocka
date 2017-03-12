@@ -1,12 +1,6 @@
-# Flask Foundation
+# Flocka
 
-A Fork of the original Flask-Foundation, but with the following enhancements:
-* Login using bcrpyted passwords
-* Forms and Models moved into modules
-* An ActiveModel Mixing added for db opertations (eg. User.save())
-* Account creation example
-* Make rename command to rename flocka to something else, eg. make rename flocka=webapp
-* Change Password example
+Flask + Docker = a little flock of application branches
 
 #### Getting Started, assumes fully-stocked virtualenv
 

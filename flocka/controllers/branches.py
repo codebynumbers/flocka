@@ -102,4 +102,5 @@ class BranchStopView(BranchAccessMixin, RedirectView):
 
     def get(self, *args, **kwargs):
         Branch.stop_container(self.branch)
+        Branch.rm_container(self.branch)
         return super(BranchStopView, self).get(*args, **kwargs)

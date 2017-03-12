@@ -77,5 +77,7 @@ def signup():
             return redirect(request.args.get("next") or url_for(".home"))
         else:
             flash("Account creation failed.", "danger")
+    else:
+        flash("Account creation failed.", "danger")
 
     return render_template("signup.html", form=form)
