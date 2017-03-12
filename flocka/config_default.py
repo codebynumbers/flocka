@@ -16,3 +16,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 NGINX_SITES_PATH = '/etc/nginx/sites-enabled'
 NGINX_RELOAD_CMD = 'sudo service nginx reload'
+
+# Restrict access to these hosts, if set
+ALLOWED_HOSTS = None

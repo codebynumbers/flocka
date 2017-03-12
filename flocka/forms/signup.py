@@ -1,3 +1,4 @@
+from flask import current_app
 from flask_wtf import Form
 from wtforms import PasswordField
 from wtforms import ValidationError
@@ -6,9 +7,10 @@ from wtforms.fields.html5 import EmailField
 
 
 def host_check(form, field):
-    _, host = field.data.split('@')
-    if host.lower() not in {'50onred.com', 'red-spark.com'}:
-        raise ValidationError('Invalid organization')
+    if current_app.config['ALLOWED_HOSTS']:
+        _, host = field.data.strip().split('@')
+        if host.lower() not in current_app.config['ALLOWED_HOSTS']:
+            raise ValidationError('Invalid organization')
 
 
 class SignupForm(Form):

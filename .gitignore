@@ -40,3 +40,4 @@ venv
 
 .idea
 *.iml
+flocka/config_local.py
