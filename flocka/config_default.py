@@ -19,3 +19,4 @@ NGINX_RELOAD_CMD = 'sudo service nginx reload'
 
 # Restrict access to these hosts, if set
 ALLOWED_HOSTS = None
+CONTAINER_NAME = 'flask-sample'

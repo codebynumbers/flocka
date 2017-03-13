@@ -57,7 +57,10 @@ class Branch(ActiveModel, db.Model):
         return render_template('vhost/branch.conf.j2', **context)
 
     def start_container(self):
-        cmd = ['docker', 'run', '-d', '-p', '{}:{}'.format(self.port, 5000), 'flask-sample', self.name]
+        if not self.port:
+            self.port = self.get_available_port()
+        cmd = ['docker', 'run', '-d', '-p', '{}:{}'.format(
+            self.port, 5000), current_app.config['CONTAINER_NAME'], self.name]
         container_id = subprocess.check_output(cmd)
         if container_id:
             self.container_id = container_id[:12]
@@ -69,11 +72,11 @@ class Branch(ActiveModel, db.Model):
         if container_id:
             self.container_id = container_id[:12]
             self.status = self.check_status(self.container_id)
+            self.port = None
 
     def rm_container(self):
         cmd = ['docker', 'rm', self.container_id]
         subprocess.check_output(cmd)
-
 
     @staticmethod
     def reload_nginx():

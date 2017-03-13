@@ -66,6 +66,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             NumericColumn(name='id', label='ID', int_format='{:}'),
             LinkColumn(name='name', label="Name",
                        endpoint='.edit', url_params={'branch_id': 'id'}),
+            NumericColumn(name='port', label='Port', int_format='{:}'),
             SelfLinkColumn('url', label='Url',
                        url="http://{subdomain}." + request.host,
                        url_params={'subdomain': 'name'}),
