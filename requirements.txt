@@ -30,7 +30,6 @@ pyflakes==1.2.3
 pytest==2.9.2
 webassets==0.11.1
 wsgiref==0.1.2
-MySQL-Python==1.2.5
 boto==2.40.0
 requests==2.10.0
 uwsgi==2.0.13.1
