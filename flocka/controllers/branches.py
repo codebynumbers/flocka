@@ -73,9 +73,10 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
                        url="http://{subdomain}." + request.host,
                        url_params={'subdomain': 'slug'}),
             RunningColumn(name='status'),
-            LinkColumn(name='start', endpoint='.start', url_params={'branch_id': 'id'}, link_text='Start'),
-            LinkColumn(name='stop', endpoint='.stop', url_params={'branch_id': 'id'}, link_text='Stop'),
-            LinkColumn(name='delete', endpoint='.delete', url_params={'branch_id': 'id'}, link_text='Delete')
+            # LinkColumn(name='start', endpoint='.start', url_params={'branch_id': 'id'}, link_text='Start'),
+            # LinkColumn(name='stop', endpoint='.stop', url_params={'branch_id': 'id'}, link_text='Stop'),
+            # LinkColumn(name='delete', endpoint='.delete', url_params={'branch_id': 'id'}, link_text='Delete'),
+            FiftyTableColumn(name='actions', label='Actions', sortable=False, cell_template='tables/cells/actions.html')
         ]
 
     def process_rows(self, rows, params=None, **context):
