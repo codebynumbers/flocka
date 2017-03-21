@@ -72,36 +72,44 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
                        url_params={'subdomain': 'name'}),
             RunningColumn(name='status'),
             LinkColumn(name='start', endpoint='.start', url_params={'branch_id': 'id'}, link_text='Start'),
-            LinkColumn(name='stop', endpoint='.stop', url_params={'branch_id': 'id'}, link_text='Stop')
-
+            LinkColumn(name='stop', endpoint='.stop', url_params={'branch_id': 'id'}, link_text='Stop'),
+            LinkColumn(name='delete', endpoint='.delete', url_params={'branch_id': 'id'}, link_text='Delete')
         ]
 
     def get_query(self, params, **context):
         return Branch.query.filter_by(user=current_user)
 
 
-@url_rule(branched_bp, ['/<branch_id>/start/'], 'start')
-class BranchStartView(BranchAccessMixin, RedirectView):
+class BranchActionView(BranchAccessMixin, RedirectView):
 
     redirect_endpoint = 'branches.list'
 
     def get_context_data(self, **context):
         return {}
 
+
+@url_rule(branched_bp, '/<branch_id>/start/', 'start')
+class BranchStartView(BranchActionView):
+
     def get(self, *args, **kwargs):
         Branch.start_container(self.branch)
         return super(BranchStartView, self).get(*args, **kwargs)
 
 
-@url_rule(branched_bp, ['/<branch_id>/stop/'], 'stop')
-class BranchStopView(BranchAccessMixin, RedirectView):
-
-    redirect_endpoint = '.list'
-
-    def get_context_data(self, **context):
-        return {}
+@url_rule(branched_bp, '/<branch_id>/stop/', 'stop')
+class BranchStopView(BranchActionView):
 
     def get(self, *args, **kwargs):
         Branch.stop_container(self.branch)
         Branch.rm_container(self.branch)
         return super(BranchStopView, self).get(*args, **kwargs)
+
+
+@url_rule(branched_bp, '/<branch_id>/delete/', 'delete')
+class BranchDeleteView(BranchActionView):
+
+    def get(self, *args, **kwargs):
+        Branch.stop_container(self.branch)
+        Branch.rm_container(self.branch)
+        self.branch.delete()
+        return super(BranchDeleteView, self).get(*args, **kwargs)
