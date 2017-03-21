@@ -65,6 +65,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
 
         return [
             NumericColumn(name='id', label='ID', int_format='{:}'),
+            FiftyTableColumn(name='container_id', label="Container ID"),
             LinkColumn(name='name', label="Name",
                        endpoint='.edit', url_params={'branch_id': 'id'}),
             NumericColumn(name='port', label='Port', int_format='{:}'),
