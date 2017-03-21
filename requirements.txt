@@ -33,4 +33,4 @@ wsgiref==0.1.2
 boto==2.40.0
 requests==2.10.0
 uwsgi==2.0.13.1
-
+python-slugify==1.2.1

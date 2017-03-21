@@ -5,6 +5,7 @@ from flask_login import current_user
 
 from fifty_tables import NumericColumn, LinkColumn, FiftyTableColumn
 from fifty_tables.views import SQLAlchemyTableView
+from slugify import slugify
 
 from flocka.controllers.mixins import BranchAccessMixin, LoginRequiredMixin
 from flocka.forms.branch import BranchForm
@@ -69,12 +70,17 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             NumericColumn(name='port', label='Port', int_format='{:}'),
             SelfLinkColumn('url', label='Url',
                        url="http://{subdomain}." + request.host,
-                       url_params={'subdomain': 'name'}),
+                       url_params={'subdomain': 'slug'}),
             RunningColumn(name='status'),
             LinkColumn(name='start', endpoint='.start', url_params={'branch_id': 'id'}, link_text='Start'),
             LinkColumn(name='stop', endpoint='.stop', url_params={'branch_id': 'id'}, link_text='Stop'),
             LinkColumn(name='delete', endpoint='.delete', url_params={'branch_id': 'id'}, link_text='Delete')
         ]
+
+    def process_rows(self, rows, params=None, **context):
+        for row in rows:
+            row['slug'] = slugify(row['name'])
+        return rows
 
     def get_query(self, params, **context):
         return Branch.query.filter_by(user=current_user)

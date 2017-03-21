@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import current_app
 from flask import render_template
 from flask import request
+from slugify import slugify
 
 from db import db, ActiveModel
 
@@ -45,12 +46,13 @@ class Branch(ActiveModel, db.Model):
 
     def add_vhost(self):
         template = self.get_vhost_template()
-        with open("{}/{}.conf".format(current_app.config['NGINX_SITES_PATH'], self.name), "wb") as fh:
+        with open("{}/{}.conf".format(
+                current_app.config['NGINX_SITES_PATH'], slugify(self.name)), "wb") as fh:
             fh.write(template)
 
     def get_vhost_template(self):
         context = dict(
-            branch=self.name,
+            branch=slugify(self.name),
             hostname=request.host,
             port=self.port
         )
