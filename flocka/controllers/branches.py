@@ -1,4 +1,4 @@
-from fifty_flask.views.generic import FormView, url_rule, RedirectView
+from fifty_flask.views.generic import FormView, url_rule, RedirectView, GenericView, TemplateView
 from flask import Blueprint, url_for, flash
 from flask import request
 from flask_login import current_user
@@ -58,6 +58,9 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
         class SelfLinkColumn(LinkColumn):
             def get_link_text(self, row):
                 return self.get_url(row)
+
+            def get_link_attributes(self, row, **kwargs):
+                return {'target': '_blank'}
 
         class RunningColumn(FiftyTableColumn):
             def get_value(self, row, **kwargs):
@@ -121,3 +124,14 @@ class BranchDeleteView(BranchActionView):
             pass
         self.branch.delete()
         return super(BranchDeleteView, self).get(*args, **kwargs)
+
+
+@url_rule(branched_bp, ['/<branch_id>/logs/'], 'logs')
+class BranchLogView(BranchAccessMixin, TemplateView):
+
+    template_name = "branch_logs.html"
+
+    def get_context_data(self, **context):
+        context = super(BranchLogView, self).get_context_data(**context)
+        context['logs'] = self.branch.get_logs(request.values.get('lines'))
+        return context

@@ -1,6 +1,5 @@
-import re
-import subprocess
 from datetime import datetime
+import subprocess
 
 from flask import current_app
 from flask import render_template
@@ -25,6 +24,7 @@ class Branch(ActiveModel, db.Model):
 
     BASE_PORT = 8000
     END_PORT = 9000
+    DEFAULT_NUM_LINES = 1000
 
     def run_container(self):
         if self.status != 'Running':
@@ -95,3 +95,10 @@ class Branch(ActiveModel, db.Model):
         else:
             status = 'Stopped'
         return status
+
+    def get_logs(self, num_lines):
+        """ TODO: figure out why this is not getting all the log data """
+        num_lines = num_lines or self.DEFAULT_NUM_LINES
+        if self.is_container_running(self.container_id):
+            cmd = ['docker', 'logs', '--tail', "{}".format(num_lines), self.container_id]
+            return subprocess.check_output(cmd)

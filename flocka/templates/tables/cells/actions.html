@@ -2,9 +2,10 @@
 
 {% block cell_value %}
     {% if row.status.lower() == 'running' %}
-        <a href="{{ url_for('branches.stop', branch_id=row.id) }}">Stop <span class="glyphicon glyphicon-stop red"></span></a>
+        <a class="btn btn-default" href="{{ url_for('branches.stop', branch_id=row.id) }}">Stop <span class="glyphicon glyphicon-stop red"></span></a>
+        <a class="btn btn-default" href="{{ url_for('branches.logs', branch_id=row.id) }}">Logs <span class="glyphicon glyphicon-list-alt gray"></span></a>
     {% else %}
-        <a href="{{ url_for('branches.start', branch_id=row.id) }}">Start <span class="glyphicon glyphicon-play green"></span></a>
+        <a class="btn btn-default" href="{{ url_for('branches.start', branch_id=row.id) }}">Start <span class="glyphicon glyphicon-play green"></span></a>
     {% endif %}
-    <a href="{{ url_for('branches.delete', branch_id=row.id) }}">Delete <span class="glyphicon glyphicon-trash gray"></span></a>
+    <a class="btn btn-default" href="{{ url_for('branches.delete', branch_id=row.id) }}">Delete <span class="glyphicon glyphicon-trash gray"></span></a>
 {% endblock cell_value %}
