@@ -115,7 +115,10 @@ class BranchStopView(BranchActionView):
 class BranchDeleteView(BranchActionView):
 
     def get(self, *args, **kwargs):
-        Branch.stop_container(self.branch)
-        Branch.rm_container(self.branch)
+        try:
+            Branch.stop_container(self.branch)
+            Branch.rm_container(self.branch)
+        except:
+            pass
         self.branch.delete()
         return super(BranchDeleteView, self).get(*args, **kwargs)
