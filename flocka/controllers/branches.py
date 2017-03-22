@@ -85,7 +85,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
         return rows
 
     def get_query(self, params, **context):
-        return Branch.query.all()
+        return Branch.query
 
 
 class BranchActionView(BranchAccessMixin, RedirectView):
