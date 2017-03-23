@@ -8,7 +8,7 @@ from fifty_tables.views import SQLAlchemyTableView
 from slugify import slugify
 from sqlalchemy.orm import joinedload
 
-from flocka.controllers.mixins import BranchAccessMixin, LoginRequiredMixin
+from flocka.controllers.mixins import BranchAccessMixin, LoginRequiredMixin, SetBranchMixin
 from flocka.forms.branch import BranchForm
 from flocka.models.branch import Branch
 
@@ -91,8 +91,12 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
     def get_query(self, params, **context):
         return Branch.query.options(joinedload('user'))
 
+# ---------------
+# Generic Actions
+# ---------------
 
-class BranchActionView(BranchAccessMixin, RedirectView):
+
+class BranchActionView(SetBranchMixin, RedirectView):
 
     redirect_endpoint = 'branches.list'
 
@@ -117,8 +121,32 @@ class BranchStopView(BranchActionView):
         return super(BranchStopView, self).get(*args, **kwargs)
 
 
+@url_rule(branched_bp, ['/<branch_id>/logs/'], 'logs')
+class BranchLogView(SetBranchMixin, TemplateView):
+
+    template_name = "branch_logs.html"
+
+    def get_context_data(self, **context):
+        context = super(BranchLogView, self).get_context_data(**context)
+        context['logs'] = self.branch.get_logs(request.values.get('lines'))
+        return context
+
+
+# ---------------
+# Owner Actions
+# ---------------
+
+
+class BranchOwnedActionView(BranchAccessMixin, RedirectView):
+    """ Provides a re"""
+    redirect_endpoint = 'branches.list'
+
+    def get_context_data(self, **context):
+        return {}
+
+
 @url_rule(branched_bp, '/<branch_id>/delete/', 'delete')
-class BranchDeleteView(BranchActionView):
+class BranchDeleteView(BranchOwnedActionView):
 
     def get(self, *args, **kwargs):
         try:
@@ -128,14 +156,3 @@ class BranchDeleteView(BranchActionView):
             pass
         self.branch.delete()
         return super(BranchDeleteView, self).get(*args, **kwargs)
-
-
-@url_rule(branched_bp, ['/<branch_id>/logs/'], 'logs')
-class BranchLogView(BranchAccessMixin, TemplateView):
-
-    template_name = "branch_logs.html"
-
-    def get_context_data(self, **context):
-        context = super(BranchLogView, self).get_context_data(**context)
-        context['logs'] = self.branch.get_logs(request.values.get('lines'))
-        return context
