@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Flask Login Example{% endblock %}
+{% block title %}Flocka Login{% endblock %}
 
 {% block body %}
-    <h2>Flask Login Example</h2>
-    <p>This login example uses bcypted passwords.</p>
-    
+
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4">
+            <h1>Login</h1>
             <form role="form" method="post">
                 {{ form.csrf_token }}
                 

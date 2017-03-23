@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Branches{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-<h3>Branches <a class="pull-right btn btn-primary" href="{{ url_for('branches.edit') }}">Add New</a></h3>
+<h3>{{ title }} <a class="pull-right btn btn-primary" href="{{ url_for('branches.edit') }}">Add New</a></h3>
 
 {%- if table -%}
 {{ table.render_table()|safe }}

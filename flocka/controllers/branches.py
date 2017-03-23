@@ -49,7 +49,6 @@ class BranchEditView(BranchAccessMixin, FormView):
         return super(BranchEditView, self).form_invalid(form, **context)
 
 
-@url_rule(branched_bp, '/', 'list')
 class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
     template_name = 'branch_list.html'
     default_sort = 'id'
@@ -90,6 +89,28 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
 
     def get_query(self, params, **context):
         return Branch.query.options(joinedload('user'))
+
+    def get_context_data(self, **context):
+        context = super(BranchListView, self).get_context_data(**context)
+        context['title'] = 'All Branches'
+        return context
+
+
+@url_rule(branched_bp, '/', 'list')
+class AllBranchListView(BranchListView):
+    pass
+
+
+@url_rule(branched_bp, '/mine', 'mine')
+class MyBranchListView(BranchListView):
+
+    def get_query(self, params, **context):
+        return Branch.query.options(joinedload('user')).filter(Branch.user == current_user)
+
+    def get_context_data(self, **context):
+        context = super(BranchListView, self).get_context_data(**context)
+        context['title'] = 'My Branches'
+        return context
 
 # ---------------
 # Generic Actions

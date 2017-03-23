@@ -1,7 +1,9 @@
 .container
 {
     margin-top: 60px;
+    width: 90%
 }
+
 
 .text-center
 {
@@ -11,7 +13,12 @@
 /* Non-default style for navbar */
 .navbar-inverse
 {
-    background-color: #49016D;
+    background-color: #6EC5B8;
+    border-color: #21B6A8;
+}
+
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color: #21B6A8;
 }
 
 .navbar-inverse .navbar-brand
