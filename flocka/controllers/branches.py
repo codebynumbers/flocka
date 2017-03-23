@@ -68,14 +68,14 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
 
         return [
             NumericColumn(name='id', label='ID', int_format='{:}'),
-            FiftyTableColumn(name='owner'),
+            FiftyTableColumn(name='owner', sortable=False),
             FiftyTableColumn(name='container_id', label="Container ID"),
             LinkColumn(name='name', label="Name",
                        endpoint='.edit', url_params={'branch_id': 'id'}),
             NumericColumn(name='port', label='Port', int_format='{:}'),
             SelfLinkColumn('url', label='Url',
                        url="http://{subdomain}." + request.host,
-                       url_params={'subdomain': 'slug'}),
+                       url_params={'subdomain': 'slug'}, sortable=False),
             RunningColumn(name='status'),
             FiftyTableColumn(name='actions', label='Actions', sortable=False, cell_template='tables/cells/actions.html')
         ]

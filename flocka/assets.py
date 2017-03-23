@@ -9,8 +9,12 @@ common_css = Bundle(
 )
 
 common_js = Bundle(
-    'js/vendor/jquery.min.js',
-    'js/vendor/bootstrap.min.js',
+    'vendor/jquery.min.js',
+    'vendor/bootstrap.min.js',
+    'vendor/jquery.pjax.js',
+    'vendor/spin.js',
+    'vendor/jquery.spin.js',
+    'vendor/pjax-table/js/pjax_table.min.js',
     Bundle(
         'js/main.js',
         filters='jsmin'

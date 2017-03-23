@@ -41,3 +41,5 @@ venv
 .idea
 *.iml
 flocka/config_local.py
+
+bower_components

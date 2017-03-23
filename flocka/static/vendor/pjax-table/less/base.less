@@ -1,0 +1,34 @@
+.table.pjax-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table.pjax-table thead,
+.table.pjax-table > thead > tr > th,
+.table.pjax-table > tbody > tr > td,
+.table.pjax-table > tfoot > tr > td {
+  border: 1px solid @gray-light;
+}
+
+.table.pjax-table thead > tr > th,
+.table.pjax-table tbody > tr > td {
+  padding: 10px;
+  border-bottom: 1px solid @gray-light;
+}
+
+.table.pjax-table tfoot > tr > td {
+  background: @gray-light;
+}
+
+th[data-sortable="true"] {
+  cursor: pointer;
+}
+
+.pjax-table-footer-static-content {
+  text-align: right;
+  font-weight: bold;
+}
+
+.table.pjax-table tbody tr:hover {
+  background: @state-info-bg;
+}
