@@ -138,7 +138,6 @@ class BranchLogView(SetBranchMixin, TemplateView):
 
 
 class BranchOwnedActionView(BranchAccessMixin, RedirectView):
-    """ Provides a re"""
     redirect_endpoint = 'branches.list'
 
     def get_context_data(self, **context):
