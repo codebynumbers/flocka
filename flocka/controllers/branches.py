@@ -1,11 +1,12 @@
-from fifty_flask.views.generic import FormView, url_rule, RedirectView, GenericView, TemplateView
-from flask import Blueprint, url_for, flash
+from fifty_flask.views.generic import FormView, url_rule, RedirectView, TemplateView
+from flask import Blueprint, flash
 from flask import request
 from flask_login import current_user
 
 from fifty_tables import NumericColumn, LinkColumn, FiftyTableColumn
 from fifty_tables.views import SQLAlchemyTableView
 from slugify import slugify
+from sqlalchemy.orm import joinedload
 
 from flocka.controllers.mixins import BranchAccessMixin, LoginRequiredMixin
 from flocka.forms.branch import BranchForm
@@ -68,6 +69,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
 
         return [
             NumericColumn(name='id', label='ID', int_format='{:}'),
+            FiftyTableColumn(name='owner'),
             FiftyTableColumn(name='container_id', label="Container ID"),
             LinkColumn(name='name', label="Name",
                        endpoint='.edit', url_params={'branch_id': 'id'}),
@@ -79,13 +81,15 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             FiftyTableColumn(name='actions', label='Actions', sortable=False, cell_template='tables/cells/actions.html')
         ]
 
-    def process_rows(self, rows, params=None, **context):
-        for row in rows:
-            row['slug'] = slugify(row['name'])
-        return rows
+    def object_to_dict(self, obj, params=None, **context):
+        item = super(BranchListView, self).object_to_dict(obj, params, **context)
+        item['owner'] = obj.user.username.split('@')[0]
+        item['slug'] = slugify(obj.name)
+        item['is_owner'] = current_user.id == obj.user.id
+        return item
 
     def get_query(self, params, **context):
-        return Branch.query
+        return Branch.query.options(joinedload('user'))
 
 
 class BranchActionView(BranchAccessMixin, RedirectView):

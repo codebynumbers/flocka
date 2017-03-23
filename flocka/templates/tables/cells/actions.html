@@ -7,5 +7,7 @@
     {% else %}
         <a class="btn btn-default" href="{{ url_for('branches.start', branch_id=row.id) }}">Start <span class="glyphicon glyphicon-play green"></span></a>
     {% endif %}
-    <a class="btn btn-default" href="{{ url_for('branches.delete', branch_id=row.id) }}">Delete <span class="glyphicon glyphicon-trash gray"></span></a>
+    {% if row.is_owner %}
+        <a class="btn btn-default" href="{{ url_for('branches.delete', branch_id=row.id) }}">Delete <span class="glyphicon glyphicon-trash gray"></span></a>
+    {% endif %}
 {% endblock cell_value %}
