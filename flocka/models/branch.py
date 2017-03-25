@@ -7,6 +7,7 @@ from flask import request
 from slugify import slugify
 
 from db import db, ActiveModel
+from flocka.services import docker_client
 
 
 class Branch(ActiveModel, db.Model):
@@ -96,9 +97,14 @@ class Branch(ActiveModel, db.Model):
             status = 'Stopped'
         return status
 
-    def get_logs(self, num_lines):
-        """ TODO: figure out why this is not getting all the log data """
-        num_lines = num_lines or self.DEFAULT_NUM_LINES
+    def get_logs(self, num_lines, reverse=False):
+        try:
+            num_lines = int(num_lines)
+        except:
+            num_lines = self.DEFAULT_NUM_LINES
+
         if self.is_container_running(self.container_id):
-            cmd = ['docker', 'logs', '--tail', "{}".format(num_lines), self.container_id]
-            return subprocess.check_output(cmd)
+            logs = docker_client.containers.get(self.container_id).logs(tail=num_lines).splitlines()
+            if reverse:
+                logs = reversed(logs)
+            return "\n".join(logs)

@@ -5,7 +5,7 @@
 {% block body %}
 
 <form role="form" method="post">
-    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
     <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8">

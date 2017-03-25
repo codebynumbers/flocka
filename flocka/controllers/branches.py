@@ -10,6 +10,7 @@ from sqlalchemy.orm import joinedload
 
 from flocka.controllers.mixins import BranchAccessMixin, LoginRequiredMixin, SetBranchMixin
 from flocka.forms.branch import BranchForm
+from flocka.forms.logs import LogForm
 from flocka.models.branch import Branch
 
 branched_bp = Blueprint('branches', __name__, url_prefix='/branches')
@@ -143,13 +144,15 @@ class BranchStopView(BranchActionView):
 
 
 @url_rule(branched_bp, ['/<branch_id>/logs/'], 'logs')
-class BranchLogView(SetBranchMixin, TemplateView):
+class BranchLogView(SetBranchMixin, FormView):
 
     template_name = "branch_logs.html"
+    form_cls = LogForm
 
     def get_context_data(self, **context):
         context = super(BranchLogView, self).get_context_data(**context)
-        context['logs'] = self.branch.get_logs(request.values.get('lines'))
+        context['logs'] = self.branch.get_logs(request.values.get('lines'),
+                                               True if request.values.get('reverse') else False)
         return context
 
 
