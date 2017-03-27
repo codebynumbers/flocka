@@ -28,5 +28,19 @@
 </form>
 
 
-<pre>{{ logs }}</pre>
+<textarea id="logs" style="width:1000px;height:300px;font-size:10px;font-face:fixed"></textarea>
 {% endblock %}
+
+{% block js %}
+{{ super() }}
+<script>
+if (!!window.EventSource) {
+  var source = new EventSource('{{ url_for('branches.stream_logs', branch_id=branch.id, container_id=branch.container_id) }}');
+  var $logs = $('#logs');
+  source.addEventListener('message', function(e) {
+    $logs.append(e.data + "\n");
+    $logs.scrollTop($logs[0].scrollHeight);
+  }, false);
+}
+</script>
+{% endblock js %}

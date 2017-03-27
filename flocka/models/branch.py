@@ -108,3 +108,7 @@ class Branch(ActiveModel, db.Model):
             if reverse:
                 logs = reversed(logs)
             return "\n".join(logs)
+
+    @staticmethod
+    def get_log_stream(container_id):
+        return docker_client.containers.get(container_id).logs(stream=True)

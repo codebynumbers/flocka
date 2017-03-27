@@ -1,5 +1,6 @@
-from fifty_flask.views.generic import FormView, url_rule, RedirectView, TemplateView
+from fifty_flask.views.generic import FormView, url_rule, RedirectView, TemplateView, GenericView
 from flask import Blueprint, flash
+from flask import Response
 from flask import request
 from flask_login import current_user
 
@@ -143,7 +144,7 @@ class BranchStopView(BranchActionView):
         return super(BranchStopView, self).get(*args, **kwargs)
 
 
-@url_rule(branched_bp, ['/<branch_id>/logs/'], 'logs')
+@url_rule(branched_bp, '/<branch_id>/logs/', 'logs')
 class BranchLogView(SetBranchMixin, FormView):
 
     template_name = "branch_logs.html"
@@ -154,6 +155,17 @@ class BranchLogView(SetBranchMixin, FormView):
         context['logs'] = self.branch.get_logs(request.values.get('lines'),
                                                True if request.values.get('reverse') else False)
         return context
+
+
+@url_rule(branched_bp, '/<branch_id>/logs/stream/<container_id>', 'stream_logs')
+class BranchLogStream(SetBranchMixin, GenericView):
+
+    def get(self, *args, **kwargs):
+
+        def events():
+            for line in Branch.get_log_stream(kwargs.get('container_id')):
+                yield "data: {}\n".format(line)
+        return Response(events(), content_type='text/event-stream')
 
 
 # ---------------
