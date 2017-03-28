@@ -164,6 +164,7 @@ class BranchLogStream(SetBranchMixin, GenericView):
 
         def events():
             for line in Branch.get_log_stream(kwargs.get('container_id')):
+                print "emitting line"
                 yield "data: {}\n".format(line)
         return Response(events(), content_type='text/event-stream')
 
