@@ -5,29 +5,6 @@
 {% block body %}
 <h1>{{ branch.name }}</h1>
 
-<form role="form" method="get">
-    <div class="row">
-        <div class="col-md-5">
-            <div class="form-group">
-                {% set val = request.values.lines or form.lines.default %}
-                {{ form.lines.label }}
-                {{ form.lines(class_="form-control", value=val) }}
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                {% set checked = request.values.reverse or form.reverse.default %}
-                {{ form.reverse.label }}
-                {{ form.reverse(class_="form-control", checked=checked) }}
-            </div>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-    </div>
-</form>
-
-
 <textarea id="logs" style="width:1000px;height:300px;font-size:10px;font-face:fixed"></textarea>
 {% endblock %}
 

@@ -1,0 +1,10 @@
+{% extends '_tables/cells/base_table_cell.html' %}
+{% import '_tables/table_utils.html' as table_utils %}
+
+{% block cell_value %}
+    {% if row.is_owner %}
+        <a href="{{ column.get_url(row) }}" {{ table_utils.tag_attributes(column.get_link_attributes(row))|safe }}>{% block link_text %}{{ column.get_link_text(row) }}{% endblock link_text %}</a>
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock cell_value %}
