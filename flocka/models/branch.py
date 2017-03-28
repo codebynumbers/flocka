@@ -1,5 +1,6 @@
 from datetime import datetime
 import subprocess
+from random import randint
 
 from flask import current_app
 from flask import render_template
@@ -41,9 +42,11 @@ class Branch(ActiveModel, db.Model):
     @classmethod
     def get_available_port(cls):
         used = {b.port for b in Branch.query.filter_by(status='Running').order_by(Branch.port).all()}
-        for i in range(cls.BASE_PORT, cls.END_PORT):
-            if i not in used:
-                return i
+        port = randint(cls.BASE_PORT, cls.END_PORT)
+        while port in used:
+            port = randint(cls.BASE_PORT, cls.END_PORT)
+        return port
+
 
     def add_vhost(self):
         template = self.get_vhost_template()
