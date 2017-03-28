@@ -131,7 +131,7 @@ class BranchActionView(SetBranchMixin, RedirectView):
 class BranchStartView(BranchActionView):
 
     def get(self, *args, **kwargs):
-        Branch.start_container(self.branch)
+        self.branch.run_container()
         return super(BranchStartView, self).get(*args, **kwargs)
 
 
