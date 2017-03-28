@@ -64,20 +64,22 @@ def logout():
 @main_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     form = SignupForm()
-    if form.validate_on_submit():
-        try:
-            user = User(username=form.username.data,
-                        password=form.password.data).save()
-        except SQLAlchemyError:
-            user = None
-            
-        if user:
-            login_user(user)
-            flash("Account created successfully.", "success")
-            return redirect(request.args.get("next") or url_for(".home"))
+
+    if form.is_submitted():
+        if form.validate():
+            try:
+                user = User(username=form.username.data,
+                            password=form.password.data).save()
+            except SQLAlchemyError:
+                user = None
+
+            if user:
+                login_user(user)
+                flash("Account created successfully.", "success")
+                return redirect(request.args.get("next") or url_for(".home"))
+            else:
+                flash("Account creation failed.", "danger")
         else:
             flash("Account creation failed.", "danger")
-    else:
-        flash("Account creation failed.", "danger")
 
     return render_template("signup.html", form=form)
