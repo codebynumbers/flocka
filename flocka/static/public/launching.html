@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Please wait...</title>
+    <script
+            src="http://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous">
+    </script>
+    <script type="text/javascript">
+    setInterval(function() {
+        $.ajax( '/' )
+            .done(
+                function () {
+                    window.location = '/';
+                }
+            )
+        }, 2000);
+  </script>
+</head>
+<body>
+Please wait while we launch your sheep into the stratosphere.
+</body>
+</html>

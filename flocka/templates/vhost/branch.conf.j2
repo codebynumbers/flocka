@@ -6,5 +6,9 @@ server {
         proxy_pass   http://127.0.0.1:{{ port }}$request_uri;
         proxy_set_header Host $host;
     }
+
+    location /launching.html {
+        alias {{ app_path }}/static/public/launching.html;
+    }
 }
 

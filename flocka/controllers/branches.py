@@ -58,7 +58,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
     def get_table_columns(self, params=None, **context):
         class SelfLinkColumn(LinkColumn):
             def get_link_text(self, row):
-                return self.get_url(row)
+                return self.get_url(row).replace('/launching.html', '')
 
             def get_link_attributes(self, row, **kwargs):
                 return {'target': '_blank'}
@@ -76,7 +76,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
                        cell_template='tables/cells/branch_name.html'),
             NumericColumn(name='port', label='Port', int_format='{:}'),
             SelfLinkColumn('url', label='Url',
-                       url="http://{subdomain}." + request.host,
+                       url="http://{subdomain}." + request.host.split(':')[0] + "/launching.html",
                        url_params={'subdomain': 'slug'}, sortable=False),
             RunningColumn(name='status'),
             FiftyTableColumn(name='actions', label='Actions', sortable=False, cell_template='tables/cells/actions.html')
