@@ -71,6 +71,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             NumericColumn(name='id', label='ID', int_format='{:}'),
             FiftyTableColumn(name='owner', sortable=False),
             FiftyTableColumn(name='container_id', label="Container ID"),
+            FiftyTableColumn(name='revision', label="Commit Hash"),
             LinkColumn(name='name', label="Name",
                        endpoint='.edit', url_params={'branch_id': 'id'},
                        cell_template='tables/cells/branch_name.html'),
