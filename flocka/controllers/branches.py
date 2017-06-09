@@ -1,10 +1,13 @@
+from datetime import date
+from dateutil import tz
+
 from fifty_flask.views.generic import FormView, url_rule, RedirectView, TemplateView, GenericView
 from flask import Blueprint, flash
 from flask import Response
 from flask import request
 from flask_login import current_user
 
-from fifty_tables import NumericColumn, LinkColumn, FiftyTableColumn
+from fifty_tables import NumericColumn, LinkColumn, FiftyTableColumn, DateTimeColumn
 from fifty_tables.views import SQLAlchemyTableView
 from slugify import slugify
 from sqlalchemy.orm import joinedload
@@ -67,6 +70,21 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             def get_value(self, row, **kwargs):
                 return Branch.check_status(row['container_id'])
 
+        class TZShiftedDate(DateTimeColumn):
+
+            def __init__(self, name, from_timezone='UTC', to_timezone='America/New_York', **kwargs):
+                super(TZShiftedDate, self).__init__(name=name, from_timezone='UTC',
+                                                    to_timezone='America/New_York', **kwargs)
+                self.from_timezone = from_timezone
+                self.to_timezone = to_timezone
+
+            def get_raw_value(self, row, **kwargs):
+                value = super(TZShiftedDate, self).get_raw_value(row, **kwargs)
+                if isinstance(value, date):
+                    value = value.replace(tzinfo=tz.gettz(self.from_timezone))
+                    return value.astimezone(tz.gettz(self.to_timezone))
+                return value
+
         return [
             NumericColumn(name='id', label='ID', int_format='{:}'),
             FiftyTableColumn(name='owner', sortable=False),
@@ -78,6 +96,7 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
             SelfLinkColumn('url', label='Url',
                        url="http://{subdomain}." + request.host.split(':')[0] + "/launching.html",
                        url_params={'subdomain': 'slug'}, sortable=False),
+            TZShiftedDate(name='created', date_format='%m/%d/%y %I:%M %p EST'),
             RunningColumn(name='status'),
             FiftyTableColumn(name='actions', label='Actions', sortable=False, cell_template='tables/cells/actions.html')
         ]
