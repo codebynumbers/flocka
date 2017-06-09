@@ -47,7 +47,6 @@ class Branch(ActiveModel, db.Model):
             port = randint(cls.BASE_PORT, cls.END_PORT)
         return port
 
-
     def add_vhost(self):
         template = self.get_vhost_template()
         with open("{}/{}.conf".format(
