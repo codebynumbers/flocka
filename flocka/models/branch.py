@@ -1,4 +1,5 @@
 from datetime import datetime
+import requests
 import subprocess
 from random import randint
 
@@ -11,11 +12,34 @@ from db import db, ActiveModel
 from flocka.services import docker_client
 
 
+def get_branch_revision(branch_name):
+    bitbucket_key = current_app.config['BITBUCKET_KEY']
+    bitbucket_secret = current_app.config['BITBUCKET_SECRET']
+
+    if not (bitbucket_key and bitbucket_secret):
+        return branch_name
+
+    response = requests.post('https://bitbucket.org/site/oauth2/access_token',
+            data={'grant_type': 'client_credentials'},
+            auth=(bitbucket_key, bitbucket_secret)).json()
+
+    access_token = response['access_token']
+
+    response = requests.get('https://api.bitbucket.org/2.0/repositories/{repo_name}/refs/branches/{branch_name}' \
+                    .format(repo_name=current_app.config['BITBUCKET_REPO'], branch_name=branch_name)).json()
+
+    try:
+        return response['target']['hash']
+    except KeyError:
+        return branch_name
+
+
 class Branch(ActiveModel, db.Model):
     __tablename__ = "branches"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
+    revision = db.Column(db.String)
     port = db.Column(db.Integer, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     status = db.Column(db.String)
@@ -65,8 +89,9 @@ class Branch(ActiveModel, db.Model):
     def start_container(self):
         if not self.port:
             self.port = self.get_available_port()
+        self.branch_revision = get_branch_revision(self.name)
         cmd = ['docker', 'run', '-d', '-p', '{}:{}'.format(
-            self.port, 5000), current_app.config['CONTAINER_NAME'], self.name]
+            self.port, 5000), current_app.config['CONTAINER_NAME'], self.branch_revision or self.name]
         container_id = subprocess.check_output(cmd)
         if container_id:
             self.container_id = container_id[:12]
