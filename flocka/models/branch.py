@@ -21,6 +21,7 @@ class Branch(ActiveModel, db.Model):
     status = db.Column(db.String)
     created = db.Column(db.DateTime)
     container_id = db.Column(db.String(12))
+    aliases = db.Column(db.String(100))
 
     user = db.relationship("User", backref="branches")
 
