@@ -21,6 +21,8 @@ class Branch(ActiveModel, db.Model):
     status = db.Column(db.String)
     created = db.Column(db.DateTime)
     container_id = db.Column(db.String(12))
+    aliases = db.Column(db.String(100))
+    config = db.Column(db.Text)
 
     user = db.relationship("User", backref="branches")
 
@@ -58,15 +60,16 @@ class Branch(ActiveModel, db.Model):
             branch=slugify(self.name),
             hostname=request.host.split(':')[0],
             port=self.port,
-            app_path=current_app.root_path
+            app_path=current_app.root_path,
+            aliases=self.aliases
         )
         return render_template('vhost/branch.conf.j2', **context)
 
     def start_container(self):
         if not self.port:
             self.port = self.get_available_port()
-        cmd = ['docker', 'run', '-d', '-p', '{}:{}'.format(
-            self.port, 5000), current_app.config['CONTAINER_NAME'], self.name]
+        cmd = ['docker', 'run', '-d', '-p', '{}:{}'.format(self.port, 5000),
+               current_app.config['CONTAINER_NAME'], self.name, self.get_config_blob()]
         container_id = subprocess.check_output(cmd)
         if container_id:
             self.container_id = container_id[:12]
@@ -115,3 +118,8 @@ class Branch(ActiveModel, db.Model):
     @staticmethod
     def get_log_stream(container_id):
         return docker_client.containers.get(container_id).logs(stream=True)
+
+    def get_config_blob(self):
+        if not self.config:
+            return ''
+        return "|".join(self.config.splitlines())
