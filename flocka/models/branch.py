@@ -69,7 +69,7 @@ class Branch(ActiveModel, db.Model):
         if not self.port:
             self.port = self.get_available_port()
         cmd = ['docker', 'run', '-d', '-p', '{}:{}'.format(self.port, 5000),
-               current_app.config['CONTAINER_NAME'], self.name, self.get_config_blob()]
+               current_app.config['CONTAINER_NAME'], self.name, "{}".format(self.get_config_blob().replace('"', '\"'))]
         container_id = subprocess.check_output(cmd)
         if container_id:
             self.container_id = container_id[:12]
