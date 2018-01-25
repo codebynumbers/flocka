@@ -8,8 +8,8 @@ class User(UserMixin, ActiveModel, db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-    password = db.Column(db.String)
+    username = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(60))
     active = db.Column(db.Boolean(), default=True, server_default='1')
 
     def __init__(self, username, password):

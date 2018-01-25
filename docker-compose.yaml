@@ -1,0 +1,13 @@
+version: '2'
+services:
+  mysql:
+    image: mysql
+    ports:
+      - "33060:3306"
+    volumes:
+      - ./docker-volume/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: flocka
+      MYSQL_DATABASE: flocka
+      MYSQL_USER: flocka
+      MYSQL_PASSWORD: flocka

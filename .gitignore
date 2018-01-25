@@ -44,3 +44,4 @@ flocka/config_local.py
 flocka.db
 
 bower_components
+docker-volume

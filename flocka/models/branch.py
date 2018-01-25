@@ -15,10 +15,10 @@ class Branch(ActiveModel, db.Model):
     __tablename__ = "branches"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
+    name = db.Column(db.String(100), unique=True)
     port = db.Column(db.Integer, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    status = db.Column(db.String)
+    status = db.Column(db.String(20))
     created = db.Column(db.DateTime)
     container_id = db.Column(db.String(12))
 
