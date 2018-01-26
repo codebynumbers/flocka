@@ -38,8 +38,8 @@
                 <div class="navbar-header">
                     <ul class="nav navbar-nav">
                         {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('branches.list') }}">Branches</a></li>
-                            <li><a href="{{ url_for('branches.mine') }}">My Branches</a></li>
+                            <li {% if request.endpoint == 'branches.list' %}class="active"{% endif %}><a href="{{ url_for('branches.list') }}">All Branches</a></li>
+                            <li {% if request.endpoint == 'branches.mine' %}class="active"{% endif %}><a href="{{ url_for('branches.mine') }}">My Branches</a></li>
                         {% endif %}
                     </ul>
                 </div>

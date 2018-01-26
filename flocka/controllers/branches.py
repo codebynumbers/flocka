@@ -2,7 +2,7 @@ from datetime import date
 from dateutil import tz
 
 from fifty_flask.views.generic import FormView, url_rule, RedirectView, TemplateView, GenericView
-from flask import Blueprint, flash
+from flask import Blueprint, flash, url_for, session
 from flask import Response
 from flask import request
 from flask_login import current_user
@@ -19,12 +19,15 @@ from flocka.models.branch import Branch
 branched_bp = Blueprint('branches', __name__, url_prefix='/branches')
 
 
+class LastListRedirectMixin(object):
+    def get_redirect_url(self, **context):
+        return url_for(session['list_view'] if 'list_view' in session else 'branches.list')
+
 @url_rule(branched_bp, ['/<branch_id>/edit/', '/edit/'], 'edit')
-class BranchEditView(BranchAccessMixin, FormView):
+class BranchEditView(BranchAccessMixin, LastListRedirectMixin, FormView):
 
     template_name = "branch_edit.html"
     form_cls = BranchForm
-    redirect_endpoint = '.list'
 
     def _get_branch(self):
         """ Get the model to save.
@@ -57,6 +60,10 @@ class BranchListView(LoginRequiredMixin, SQLAlchemyTableView):
     template_name = 'branch_list.html'
     default_sort = 'id'
     default_sort_direction = 'asc'
+
+    def dispatch_request(self, *args, **kwargs):
+        session['list_view'] = request.endpoint
+        return super(BranchListView, self).dispatch_request(self, *args, **kwargs)
 
     def get_table_columns(self, params=None, **context):
         class SelfLinkColumn(LinkColumn):
@@ -137,10 +144,7 @@ class MyBranchListView(BranchListView):
 # Generic Actions
 # ---------------
 
-
-class BranchActionView(SetBranchMixin, RedirectView):
-
-    redirect_endpoint = 'branches.list'
+class BranchActionView(SetBranchMixin, LastListRedirectMixin, RedirectView):
 
     def get_context_data(self, **context):
         return {}
@@ -195,7 +199,7 @@ class BranchLogStream(SetBranchMixin, GenericView):
 # ---------------
 
 
-class BranchOwnedActionView(BranchAccessMixin, RedirectView):
+class BranchOwnedActionView(BranchAccessMixin, BranchActionView):
     redirect_endpoint = 'branches.list'
 
     def get_context_data(self, **context):
