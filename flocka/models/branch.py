@@ -70,7 +70,7 @@ class Branch(ActiveModel, db.Model):
             '-p', '{}:{}'.format(self.port, 5000),
             current_app.config['CONTAINER_NAME'],
             self.name,
-            "{}.{}".format(slugify(self.name), hostname=request.host.split(':')[0])
+            "{}.{}".format(slugify(self.name), request.host.split(':')[0])
         ]
         container_id = subprocess.check_output(cmd)
         if container_id:
