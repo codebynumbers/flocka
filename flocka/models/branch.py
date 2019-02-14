@@ -95,7 +95,7 @@ class Branch(ActiveModel, db.Model):
 
     @staticmethod
     def is_container_running(container_id):
-        return container_id and container_id in subprocess.check_output(['docker', 'ps'])
+        return container_id and container_id.encode('ascii') in subprocess.check_output(['docker', 'ps'])
 
     @staticmethod
     def check_status(container_id):
