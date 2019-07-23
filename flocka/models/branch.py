@@ -2,6 +2,7 @@ from datetime import datetime
 import subprocess
 from random import randint
 
+import yaml
 from flask import current_app
 from flask import render_template
 from flask import request
@@ -21,6 +22,7 @@ class Branch(ActiveModel, db.Model):
     status = db.Column(db.String(20))
     created = db.Column(db.DateTime)
     container_id = db.Column(db.String(12))
+    custom_config = db.Column(db.Text)
 
     user = db.relationship("User", backref="branches")
 
@@ -65,6 +67,7 @@ class Branch(ActiveModel, db.Model):
     def start_container(self):
         if not self.port:
             self.port = self.get_available_port()
+
         cmd = [
             'docker', 'run', '-d',
             '-p', '{}:{}'.format(self.port, 5000),
@@ -72,6 +75,12 @@ class Branch(ActiveModel, db.Model):
             self.name,
             "{}.{}".format(slugify(self.name), request.host.split(':')[0])
         ]
+
+        if self.custom_config:
+            configs = yaml.safe_load(self.custom_config)
+            for k, v in configs.items():
+                cmd.extend(['--env', k, v])
+
         container_id = subprocess.check_output(cmd)
         if container_id:
             self.container_id = container_id[:12]

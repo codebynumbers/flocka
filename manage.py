@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from flask_migrate import MigrateCommand
+from flask_migrate import MigrateCommand, stamp
 from flask_script import Manager, Server
 from flask_assets import ManageAssets
 
@@ -20,6 +20,15 @@ def make_shell_context():
         in the context of the app
     """
     return dict(app=app, db=db, User=User)
+
+
+@manager.command
+def createdb():
+    """ Creates a database with all of the tables defined in
+        your Alchemy models
+    """
+    db.create_all()
+    stamp()
 
 
 if __name__ == "__main__":

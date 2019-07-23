@@ -20,7 +20,7 @@ def health():
     return "OK"
 
 
-@main_bp.route("/login", methods=["GET", "POST"])
+@main_bp.route("/login/", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -35,7 +35,7 @@ def login():
     return render_template("login.html", form=form)
 
 
-@main_bp.route("/changepass", methods=["GET", "POST"])
+@main_bp.route("/changepass/", methods=["GET", "POST"])
 @login_required
 def change_password():
     form = ChangePasswordForm()
@@ -54,14 +54,14 @@ def change_password():
         return render_template("change_password.html", form=form)
 
 
-@main_bp.route("/logout")
+@main_bp.route("/logout/")
 def logout():
     logout_user()
     flash("You have been logged out.", "success")
     return redirect(url_for(".home"))
 
 
-@main_bp.route("/signup", methods=["GET", "POST"])
+@main_bp.route("/signup/", methods=["GET", "POST"])
 def signup():
     form = SignupForm()
 

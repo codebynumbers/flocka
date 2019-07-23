@@ -38,4 +38,4 @@ python-slugify==1.2.1
 docker==2.2.0
 python-dateutil==2.6.1
 MySQL-python==1.2.5
-
+pyyaml==5.1.1
