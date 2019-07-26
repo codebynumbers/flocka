@@ -1,6 +1,6 @@
 from flask_wtf import Form
 from wtforms import StringField, TextAreaField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 
 class BranchSlugField(StringField):
@@ -15,4 +15,4 @@ class BranchSlugField(StringField):
 
 class BranchForm(Form):
     name = BranchSlugField(u'Name', validators=[DataRequired()])
-    custom_config = TextAreaField(u'Custom Environment Vars (yaml format)', validators=[DataRequired()])
+    custom_config = TextAreaField(u'Custom Environment Vars (yaml format)', validators=[Optional()])  #  TODO validate yaml
