@@ -83,7 +83,7 @@ class Branch(ActiveModel, db.Model):
 
             configs = yaml.safe_load(self.custom_config)
             for k, v in configs.items():
-                cmd.extend(['--env', k, v])
+                cmd.extend(['--env', k, str(v)])
 
         container_id = subprocess.check_output(cmd)
         if container_id:
