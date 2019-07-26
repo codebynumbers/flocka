@@ -68,7 +68,11 @@ class Branch(ActiveModel, db.Model):
         if not self.port:
             self.port = self.get_available_port()
 
-        env = {}
+        cmd = [
+            'docker', 'run', '-d',
+            '-p', '{}:{}'.format(self.port, 5000),
+        ]
+
         if self.custom_config:
             # Replace Macros
             for k, v in self.get_macros().items():
@@ -76,17 +80,15 @@ class Branch(ActiveModel, db.Model):
 
             configs = yaml.safe_load(self.custom_config)
             for k, v in configs.items():
-                env[k] = str(v)
+                cmd.extend(['-e', k, str(v)])
 
-        cmd = [
-            'docker', 'run', '-d',
-            '-p', '{}:{}'.format(self.port, 5000),
+        cmd += [
             current_app.config['CONTAINER_NAME'],
             self.name,
             "{}.{}".format(slugify(self.name), request.host.split(':')[0])
         ]
 
-        container_id = subprocess.check_output(cmd, env=env)
+        container_id = subprocess.check_output(cmd)
         if container_id:
             self.container_id = container_id[:12]
             self.status = self.check_status(self.container_id)
