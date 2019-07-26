@@ -77,6 +77,10 @@ class Branch(ActiveModel, db.Model):
         ]
 
         if self.custom_config:
+            # Replace Macros
+            for k, v in self.get_macros().items():
+                self.custom_config = self.custom_config.replace(k, v)
+
             configs = yaml.safe_load(self.custom_config)
             for k, v in configs.items():
                 cmd.extend(['--env', k, v])
@@ -129,3 +133,12 @@ class Branch(ActiveModel, db.Model):
     @staticmethod
     def get_log_stream(container_id):
         return docker_client.containers.get(container_id).logs(stream=True)
+
+    @property
+    def hostname(self):
+        return "{}.{}".format(slugify(self.name), request.host.split(':')[0])
+
+    def get_macros(self):
+        return {
+            '$host': self.hostname
+        }
