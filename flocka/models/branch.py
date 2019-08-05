@@ -80,7 +80,7 @@ class Branch(ActiveModel, db.Model):
 
             configs = yaml.safe_load(self.custom_config)
             for k, v in configs.items():
-                cmd.extend(['-e', "{}='{}'".format(k, v)])
+                cmd.extend(['-e', "{}={}".format(k, v)])
 
         cmd.extend([
             current_app.config['CONTAINER_NAME'],
