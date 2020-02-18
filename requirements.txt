@@ -33,7 +33,7 @@ pytest==2.9.2
 webassets==0.11.1
 wsgiref==0.1.2
 boto==2.40.0
-requests==2.10.0
+requests==2.20.0
 uwsgi==2.0.13.1
 python-slugify==1.2.1
 docker==2.2.0
